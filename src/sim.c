@@ -143,7 +143,7 @@ void process_instruction()
         break;
         case 0x21:lh(rs,rt,imm);
         break;
-        case 0x22:lw(rs,rt,imm);
+        case 0x23:lw(rs,rt,imm);
         break;
         case 0x24:lbu(rs,rt,imm);
         break;

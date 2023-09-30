@@ -10,7 +10,7 @@ int32_t imm_sign_ext(uint16_t imm){
 
 uint32_t imm_usign_ext(uint16_t imm){
     uint32_t ext_imm=(uint32_t)imm;
-    return ext_imm;   
+    return ext_imm;
 };
 
 int32_t byte_sign_ext(uint8_t byte){
@@ -97,7 +97,7 @@ void addi(uint8_t rs,uint8_t rd, uint16_t imm){
 };
 
 void addiu(uint8_t rs,uint8_t rd, uint16_t imm){
-    uint32_t ext_imm=imm_usign_ext(imm);
+    uint32_t ext_imm=imm_sign_ext(imm);
     NEXT_STATE.REGS[rd]=CURRENT_STATE.REGS[rs]+ext_imm;
     NEXT_STATE.PC = CURRENT_STATE.PC + 4;
 };
@@ -115,7 +115,7 @@ void slti(uint8_t rs,uint8_t rd, uint16_t imm){
 };
 
 void sltiu(uint8_t rs,uint8_t rd, uint16_t imm){
-    uint32_t ext_imm=imm_usign_ext(imm);
+    uint32_t ext_imm=imm_sign_ext(imm);
     if (CURRENT_STATE.REGS[rs]<ext_imm)
     {
         NEXT_STATE.REGS[rd]=1;
@@ -167,7 +167,7 @@ void lb(uint8_t rs,uint8_t rd, uint16_t imm){
 
 void lh(uint8_t rs,uint8_t rd, uint16_t imm){
     uint32_t addr = imm_sign_ext(imm) + CURRENT_STATE.REGS[rs];
-    if(addr&0x1!=0){
+    if((addr&0x1)!=0){
         printf("exception!");
     }
     else{
@@ -179,7 +179,7 @@ void lh(uint8_t rs,uint8_t rd, uint16_t imm){
 
 void lw(uint8_t rs,uint8_t rd, uint16_t imm){
     uint32_t addr = imm_sign_ext(imm) + CURRENT_STATE.REGS[rs];
-    if(addr&0x3!=0){
+    if((addr&0x3)!=0){
         printf("exception!");
     }
     else{
@@ -199,7 +199,7 @@ void lbu(uint8_t rs,uint8_t rd, uint16_t imm){
 
 void lhu(uint8_t rs,uint8_t rd, uint16_t imm){
     uint32_t addr = imm_sign_ext(imm) + CURRENT_STATE.REGS[rs];
-    if(addr&0x1!=0){
+    if((addr&0x1)!=0){
         printf("exception!");
     }
     else{
@@ -232,7 +232,7 @@ void sw(uint8_t rs,uint8_t rd, uint16_t imm)
 };
 
 void bltz(uint8_t rs,uint16_t imm){
-    if(CURRENT_STATE.REGS[rs]&0x80000000!=0){
+    if((CURRENT_STATE.REGS[rs]&0x80000000)!=0){
         uint32_t offset=imm_sign_ext(imm)<<2;
         NEXT_STATE.PC=CURRENT_STATE.PC+4+offset;
     }
@@ -242,8 +242,8 @@ void bltz(uint8_t rs,uint16_t imm){
 };
 
 void bgez(uint8_t rs,uint16_t imm){
-    if(CURRENT_STATE.REGS[rs]&0x80000000==0){
-        uint32_t offset=imm_sign_ext(imm)<<4;
+    if((CURRENT_STATE.REGS[rs]&0x80000000)==0){
+        uint32_t offset=imm_sign_ext(imm)<<2;
         NEXT_STATE.PC=CURRENT_STATE.PC+4+offset;
     }
     else{
@@ -253,9 +253,9 @@ void bgez(uint8_t rs,uint16_t imm){
 
 void bltzal(uint8_t rs,uint16_t imm){
     if(rs!=31){
-        uint32_t offset=imm_sign_ext(imm)<<4;
-        if(CURRENT_STATE.REGS[rs]&0x80000000!=0){
-            NEXT_STATE.REGS[31]=CURRENT_STATE.PC+4;
+        uint32_t offset=imm_sign_ext(imm)<<2;
+        NEXT_STATE.REGS[31]=CURRENT_STATE.PC+4;
+        if((CURRENT_STATE.REGS[rs]&0x80000000)!=0){
             NEXT_STATE.PC=CURRENT_STATE.PC+4+offset;
         }
         else{
@@ -271,8 +271,8 @@ void bltzal(uint8_t rs,uint16_t imm){
 
 void bgezal(uint8_t rs, uint16_t imm){
     if(rs!=31){
-        uint32_t offset=imm_sign_ext(imm)<<4;
-        if(CURRENT_STATE.REGS[rs]&0x80000000==0){
+        uint32_t offset=imm_sign_ext(imm)<<2;
+        if((CURRENT_STATE.REGS[rs]&0x80000000)==0){
             NEXT_STATE.REGS[31]=CURRENT_STATE.PC+4;
             NEXT_STATE.PC=CURRENT_STATE.PC+4+offset;
         }
